@@ -1,7 +1,7 @@
 terraform {
   backend "s3" {
     # Replace this with your bucket name!
-    key            = "global/s3/terraform.tfstate"
+    key            = var.instace_count
   }
 }
 
