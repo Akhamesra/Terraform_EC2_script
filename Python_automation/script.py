@@ -12,7 +12,7 @@ s3_resource = boto3.resource('s3')
 
 s3 = AppGroup('s3')
 
-@s3.command('downlaodFile')
+@s3.command('downloadFile')
 def downloadFile(bucketname='akshitkhamesraautomation'):
     objectpath = 'terraform_modules/EC2/number'
     object_name = 'number'
