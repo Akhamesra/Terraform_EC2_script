@@ -37,12 +37,6 @@ def uploadFile():
         print(ce)
 
 
-def instanceCount():
-    with open('terraform_modules/EC2/file1.json') as f:
-        data = json.load(f)
-        data = data['variables']['instance_count']['value']
-    return data
-
 
 ses = AppGroup('ses')
 
@@ -89,6 +83,12 @@ def sendLaunchMail(email,number_of_ec2):
             return False
         else:
             print('email sent')
+
+def instanceCount():
+    with open('terraform_modules/EC2/file1.json') as f:
+        data = json.load(f)
+        data = data['variables']['instance_count']['value']
+    return data
 
 @ses.command('sendTerminateMail')
 @click.option('-e','--email',required=True,help="Enter Sender's email id")
