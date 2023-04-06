@@ -3,6 +3,7 @@ import click
 import boto3
 import config.settings as AppSetting
 import json
+import json
 
 s3_resource = boto3.resource('s3')
 
@@ -38,10 +39,13 @@ def uploadFile():
 
 ses = AppGroup('ses')
 
-@ses.command('sendLaunchMail')
-@click.option('--email',required=True,help="Enter Sender's email id")
+
+ses = AppGroup('ses')
+
+@ses.command('sendLaunchLaunchMail')
+@click.option('-e','--email',required=True,help="Enter Sender's email id")
 @click.option('--number_of_ec2')
-def sendMail(email,number_of_ec2):  
+def sendLaunchMail(email,number_of_ec2):  
         RECIPIENT=[email]      
         if(email.find('$$')!=-1):
             RECIPIENT=email.split('$$')  
@@ -81,6 +85,57 @@ def sendMail(email,number_of_ec2):
             return False
         else:
             print('email sent')
+
+def instanceCount():
+    with open('terraform_modules/EC2/file1.json') as f:
+        data = json.load(f)
+        data = data['variables']['instance_count']['value']
+    return data
+
+@ses.command('sendTerminateMail')
+@click.option('-e','--email',required=True,help="Enter Sender's email id")
+def sendTerminateMail(email):
+        instances = instanceCount()  
+        RECIPIENT=[email]      
+        if(email.find('$$')!=-1):
+            RECIPIENT=email.split('$$')  
+        SENDER = AppSetting.sender['name'] + " <" + AppSetting.sender['email'] + ">"
+        AWS_REGION = "ap-south-1"
+        SUBJECT = "Instances Terminated"
+        BODY_TEXT = "FROM TEAM DEVOPS"
+        BODY_HTML = str(instances) +" EC2 instances terminated."
+        CHARSET = "UTF-8"
+        # client = self.getClient('ses', AWS_REGION)
+        client = boto3.client('ses', region_name=AWS_REGION)
+        try:
+            response = client.send_email(
+                Destination={
+                    'ToAddresses': RECIPIENT,
+                },
+                Message={
+                    'Body': {
+                        'Html': {
+                            'Charset': CHARSET,
+                            'Data': BODY_HTML,
+                        },
+                        'Text': {
+                            'Charset': CHARSET,
+                            'Data': BODY_TEXT,
+                        },
+                    },
+                    'Subject': {
+                        'Charset': CHARSET,
+                        'Data': SUBJECT,
+                    },
+                },
+                Source=SENDER,
+            )
+        except Exception as e:
+            print('email sent fail : '+str(e))
+            return False
+        else:
+            print('email sent')
+
 
 def instanceCount():
     with open('terraform_modules/EC2/file1.json') as f:
