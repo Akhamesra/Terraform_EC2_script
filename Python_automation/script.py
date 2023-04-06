@@ -1,53 +1,39 @@
 from flask.cli import AppGroup
-
-import shutil
 import click
 import boto3
-import os
-from pathlib import Path
-from pathlib import Path
-
+import config.settings as AppSetting
 
 s3_resource = boto3.resource('s3')
 
 s3 = AppGroup('s3')
 
 @s3.command('downloadFile')
-def downloadFile(bucketname='akshitkhamesraautomation'):
-    objectpath = 'terraform_modules/EC2/number'
-    object_name = 'number'
+def downloadFile():
+    bucketname = AppSetting.bucketname
+    objectpath = AppSetting.batchNumber['path']
+    objectname = AppSetting.batchNumber['name']
     try:
-        s3_resource.Object(bucketname,object_name).download_file(objectpath)
+        s3_resource.Object(bucketname,objectname).download_file(objectpath)
         print('Downloaded')
     except Exception as ce:
         print(ce)
 
 @s3.command('uploadFile')
-def uploadFile(bucketname="akshitkhamesraautomation"):
-    with open("terraform_modules/EC2/number", "r") as f:
-        number = int(f.read())
-    number += 1
-    with open("terraform_modules/EC2/number", "w") as f:
-        f.write(str(number))
-    objectpath="terraform_modules/EC2/number"
-    object_name = 'number'
+def uploadFile():
     try:
-        s3_resource.Object(bucketname,object_name).upload_file(objectpath, ExtraArgs={'ACL':'public-read'})
+        bucketname = AppSetting.bucketname
+        objectpath = AppSetting.batchNumber['path']
+        objectname = AppSetting.batchNumber['name']
+        with open(objectpath, "r") as f:
+            number = int(f.read())
+        number += 1
+        with open(objectpath, "w") as f:
+            f.write(str(number))
+    
+        s3_resource.Object(bucketname,objectname).upload_file(objectpath, ExtraArgs={'ACL':'public-read'})
         print('Upload succeeded')
     except Exception as ce:
         print(ce)
-
-# @s3.command('downloadFile')
-# @click.option('--id',required=True)
-# def download_object(id,bucketname="terraformkhamesra"):
-#     objectpath = 'terraform_modules/EC2/terraform.tfstate'
-#     object_name = 'tfstate_files/terraform'+id+'.tfstate'
-#     try:
-#         s3_resource.Object(bucketname,object_name).download_file(objectpath)
-#         print('Download succeeded')
-#     except Exception as ce:
-#         print(f"{ce.response['Error']['Code']} : {ce.response['Error']['Message']}")
-
 
 ses = AppGroup('SES')
 
@@ -58,7 +44,7 @@ def sendMail(email,number_of_ec2):
         RECIPIENT=[email]      
         if(email.find('$$')!=-1):
             RECIPIENT=email.split('$$')  
-        SENDER = 'Akshit <akhamesra31@gmail.com>'
+        SENDER = AppSetting.sender['name'] + " <" + AppSetting.sender['email'] + ">"
         AWS_REGION = "ap-south-1"
         SUBJECT = "Instances Created"
         BODY_TEXT = "FROM TEAM DEVOPS"
