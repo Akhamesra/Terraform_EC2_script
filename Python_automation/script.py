@@ -88,10 +88,13 @@ def sendLaunchMail(email,number_of_ec2):
 
 
 def instanceCount():
+    count=0
     with open('terraform_modules/EC2/file1.json') as f:
         data = json.load(f)
-        data = data['variables']['instance_count']['value']
-    return data
+        for d in data['resource_changes']:
+            if d['type']=='aws_instance':
+                count+=1
+    return count
 
 @ses.command('sendTerminateMail')
 @click.option('-e','--email',required=True,help="Enter Sender's email id")
