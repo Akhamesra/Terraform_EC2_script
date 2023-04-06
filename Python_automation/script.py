@@ -42,7 +42,7 @@ ses = AppGroup('ses')
 
 ses = AppGroup('ses')
 
-@ses.command('sendLaunchLaunchMail')
+@ses.command('sendLaunchMail')
 @click.option('-e','--email',required=True,help="Enter Sender's email id")
 @click.option('--number_of_ec2')
 def sendLaunchMail(email,number_of_ec2):  
