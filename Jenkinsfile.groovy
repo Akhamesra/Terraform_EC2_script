@@ -37,6 +37,7 @@ pipeline {
                         sh terraform+ 'plan -destroy -out=file'
                         sh terraform+ 'show -json file > file1.json'
                         sh terraform+ 'destroy --auto-approve'
+                        // sh "flask s3 deleteFile"
                         sh "flask ses sendTerminateMail --email "+email
 
                     }

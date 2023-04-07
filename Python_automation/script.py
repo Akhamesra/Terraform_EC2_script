@@ -3,7 +3,8 @@ import click
 import boto3
 import config.settings as AppSetting
 import json
-import json
+from botocore.exceptions import ClientError
+
 
 s3_resource = boto3.resource('s3')
 
@@ -17,8 +18,14 @@ def downloadFile():
     try:
         s3_resource.Object(bucketname,objectname).download_file(objectpath)
         print('Downloaded')
-    except Exception as ce:
-        print(ce)
+    except ClientError as ce:
+        if (ce.response['Error']['Message']=="Not Found"):
+            with open('terraform_modules/EC2/number','w+') as f:
+                f.write('1')
+        else:
+            print(ce)
+    except Exception as error:
+        print(error)
 
 @s3.command('uploadFile')
 def uploadFile():
@@ -37,6 +44,16 @@ def uploadFile():
         print('Upload succeeded')
     except Exception as ce:
         print(ce)
+
+@s3.command('deleteFile')
+def deleteFile():
+        try:
+            bucketname = AppSetting.bucketname
+            objectname = AppSetting.batchNumber['name']
+            s3_resource.Object(bucketname, objectname).delete()
+            print('File deleted')
+        except ClientError as ce:
+            print(f"{ce.response['Error']['Code']} : {ce.response['Error']['Message']}")
 
 ses = AppGroup('ses')
 
