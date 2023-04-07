@@ -113,14 +113,14 @@ def instanceCount():
                     count+=1
         return count
     except Exception as e:
-        print("YESS")
-        print(e)
+        print("No resource to delete, This batch has no instances running!")
         return 0
 
 @ses.command('sendTerminateMail')
 @click.option('-e','--email',required=True,help="Enter Sender's email id")
 def sendTerminateMail(email):
         instances = instanceCount()  
+        return
         RECIPIENT=[email]      
         if(email.find('$$')!=-1):
             RECIPIENT=email.split('$$')  
