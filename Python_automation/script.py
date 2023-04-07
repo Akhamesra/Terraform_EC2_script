@@ -20,7 +20,7 @@ def downloadFile():
         print('File Downloaded')
     except ClientError as ce:
         if (ce.response['Error']['Message']=="Not Found"):
-            with open('terraform_modules/EC2/number','w+') as f:
+            with open(AppSetting.batchNumber['path'],'w+') as f:
                 f.write('1')
             print("File Created")
         else:
@@ -120,7 +120,6 @@ def instanceCount():
 @click.option('-e','--email',required=True,help="Enter Sender's email id")
 def sendTerminateMail(email):
         instances = instanceCount()  
-        return
         RECIPIENT=[email]      
         if(email.find('$$')!=-1):
             RECIPIENT=email.split('$$')  
