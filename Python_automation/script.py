@@ -113,7 +113,7 @@ def instanceCount():
                     count+=1
         return count
     except Exception as e:
-        print("No resource to delete, This batch has no instances running!")
+        print(" !!! \n   No resource to delete, This batch has no instances running!\n !!!")
         return 0
 
 @ses.command('sendTerminateMail')

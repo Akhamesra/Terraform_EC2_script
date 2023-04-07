@@ -7,4 +7,3 @@ batchNumber = { 'name' : 'number', #S3/path/number
 sender = { 'name' : 'Akshit',
            'email': 'akhamesra31@gmail.com'}
 
-launchMsg = {}

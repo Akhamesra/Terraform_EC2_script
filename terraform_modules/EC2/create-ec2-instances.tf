@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    key            = ""
+    key            = "batch_keynotprovided/terraform.tfstate"
   }
 }
 
