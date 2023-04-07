@@ -17,11 +17,12 @@ def downloadFile():
     objectname = AppSetting.batchNumber['name']
     try:
         s3_resource.Object(bucketname,objectname).download_file(objectpath)
-        print('Downloaded')
+        print('File Downloaded')
     except ClientError as ce:
         if (ce.response['Error']['Message']=="Not Found"):
             with open('terraform_modules/EC2/number','w+') as f:
                 f.write('1')
+            print("File Created")
         else:
             print(ce)
     except Exception as error:
@@ -41,7 +42,7 @@ def uploadFile():
             f.write(str(number))
     
         s3_resource.Object(bucketname,objectname).upload_file(objectpath, ExtraArgs={'ACL':'public-read'})
-        print('Upload succeeded')
+        print('File Upload')
     except Exception as ce:
         print(ce)
 
@@ -104,12 +105,16 @@ def sendLaunchMail(email,number_of_ec2):
 
 def instanceCount():
     count=0
-    with open('terraform_modules/EC2/file1.json') as f:
-        data = json.load(f)
-        for d in data['resource_changes']:
-            if d['type']=='aws_instance':
-                count+=1
-    return count
+    try:
+        with open('terraform_modules/EC2/file1.json') as f:
+            data = json.load(f)
+            for d in data['resource_changes']:
+                if d['type']=='aws_instance':
+                    count+=1
+        return count
+    except Exception as e:
+        print(e)
+        return 0
 
 @ses.command('sendTerminateMail')
 @click.option('-e','--email',required=True,help="Enter Sender's email id")
