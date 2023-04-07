@@ -26,6 +26,7 @@ def uploadFile():
         bucketname = AppSetting.bucketname
         objectpath = AppSetting.batchNumber['path']
         objectname = AppSetting.batchNumber['name']
+
         with open(objectpath, "r") as f:
             number = int(f.read())
         number += 1
@@ -36,9 +37,6 @@ def uploadFile():
         print('Upload succeeded')
     except Exception as ce:
         print(ce)
-
-ses = AppGroup('ses')
-
 
 ses = AppGroup('ses')
 

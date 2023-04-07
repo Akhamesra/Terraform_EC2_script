@@ -1,7 +1,6 @@
 terraform {
   backend "s3" {
-    # Replace this with your bucket name!
-    key            = var.instace_count
+    key            = ""
   }
 }
 
@@ -19,6 +18,7 @@ resource "aws_instance" "ec2_instancess" {
   count = var.instance_count
   ami           = var.ami
   instance_type = var.instancetype
+  subnet_id = var.subnetid
   tags = {
     Name = "VS Instance ${local.instance_number + count.index}"
   }
