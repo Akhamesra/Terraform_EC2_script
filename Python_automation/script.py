@@ -22,6 +22,7 @@ def choosesubnet(instance_count):
         # print('{:s}: cidr={:d}, aws used=5, you used={:d}, free={:d}'.\
         #     format(subnet.id, cidr_ips, used_ips - 5, free_ips))
         if int(instance_count)<= free_ips:
+            print(subnet.id)
             return subnet.id
     
 
