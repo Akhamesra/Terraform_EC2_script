@@ -13,10 +13,10 @@ s3 = AppGroup('s3')
 @s3.command('downloadFile')
 def downloadFile():
     bucketname = AppSetting.bucketname
-    objectpath = AppSetting.batchNumber['path']
-    objectname = AppSetting.batchNumber['name']
+    objectname_number = AppSetting.objectnumber['paths3']+AppSetting.objectnumber['name'] #S3/path/number
+    objectpath_number = AppSetting.objectnumber['pathlocal'] +AppSetting.objectnumber['name'] #local/path/number
     try:
-        s3_resource.Object(bucketname,objectname).download_file(objectpath)
+        s3_resource.Object(bucketname,objectname_number).download_file(objectpath_number)
         print('File Downloaded')
     except ClientError as ce:
         if (ce.response['Error']['Message']=="Not Found"):
@@ -54,7 +54,7 @@ def uploadFile():
         objectpath_number = AppSetting.objectnumber['pathlocal'] +AppSetting.objectnumber['name'] #local/path/number
         increamentbatch(objectpath_number)
 
-        objectname_ip = AppSetting.objectip['paths3']+AppSetting.objectnumber['name'] #S3/path/instances_ips.txt
+        objectname_ip = AppSetting.objectip['paths3']+AppSetting.objectip['name'] #S3/path/instances_ips.txt
         objectpath_ip = AppSetting.objectip['pathlocal'] +AppSetting.objectip['name'] #local/path/instances_ips.txt
 
         # objectname = file #S3/path
