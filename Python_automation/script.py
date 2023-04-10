@@ -77,8 +77,9 @@ def deleteFile():
             objectname_number = AppSetting.objectnumber['paths3']+AppSetting.objectnumber['name'] #S3/path/number
             objectname_ip = AppSetting.objectip['paths3']+AppSetting.objectnumber['name'] #S3/path/instances_ips.txt
             s3_resource.Object(bucketname, objectname_number).delete()
+            print('number file deleted')
             s3_resource.Object(bucketname, objectname_ip).delete()
-            print('File deleted')
+            print('instance_ips file deleted')
         except ClientError as ce:
             print(f"{ce.response['Error']['Code']} : {ce.response['Error']['Message']}")
 
