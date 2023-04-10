@@ -13,6 +13,8 @@ s3 = AppGroup('s3')
 @s3.command('downloadFile')
 def downloadFile():
     bucketname = AppSetting.bucketname
+    # objectpath = AppSetting.batchNumber['path']
+    # objectname = AppSetting.batchNumber['name']
     objectname_number = AppSetting.objectnumber['paths3']+AppSetting.objectnumber['name'] #S3/path/number
     objectpath_number = AppSetting.objectnumber['pathlocal'] +AppSetting.objectnumber['name'] #local/path/number
     try:
@@ -20,7 +22,7 @@ def downloadFile():
         print('File Downloaded')
     except ClientError as ce:
         if (ce.response['Error']['Message']=="Not Found"):
-            with open(AppSetting.batchNumber['path'],'w+') as f:
+            with open(objectpath_number,'w+') as f:
                 f.write('1')
             print("File Created")
         else:
@@ -88,10 +90,9 @@ def deleteFile():
 ses = AppGroup('ses')
 
 @ses.command('sendLaunchMail')
-@click.option('-e','--email',required=True,help="Enter Sender's email id")
 @click.option('--number_of_ec2')
 def sendLaunchMail(email,number_of_ec2):  
-        RECIPIENT=[email]      
+        RECIPIENTS=AppSetting.recipients     
         if(email.find('$$')!=-1):
             RECIPIENT=email.split('$$')  
         SENDER = AppSetting.sender['name'] + " <" + AppSetting.sender['email'] + ">"
@@ -105,7 +106,7 @@ def sendLaunchMail(email,number_of_ec2):
         try:
             response = client.send_email(
                 Destination={
-                    'ToAddresses': RECIPIENT,
+                    'ToAddresses': RECIPIENTS,
                 },
                 Message={
                     'Body': {

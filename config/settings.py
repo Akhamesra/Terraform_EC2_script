@@ -14,3 +14,4 @@ objectip = { 'name' : 'instance_ips.txt',
 sender = { 'name' : 'Akshit',
            'email': 'akhamesra31@gmail.com'}
 
+recipients = ['akhamesra31@gmail.com']
