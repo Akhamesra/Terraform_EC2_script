@@ -4,7 +4,7 @@ import boto3
 import config.settings as AppSetting
 import json
 from botocore.exceptions import ClientError
-
+import os
 ec2_resource = boto3.resource('ec2')
 # Use this for specific subnets
 ec2 = AppGroup('ec2')
@@ -101,8 +101,7 @@ def deleteFile():
             s3_resource.Object(bucketname, objectname_number).delete()
             print('number file deleted')
             s3_resource.Object(bucketname, objectname_ip).delete()
-            print(bucketname)
-            print(objectname_ip)
+            os.remove(AppSetting.objectip['pathlocal']+AppSetting.objectip['name'])
             print('instance_ips file deleted')
         except ClientError as ce:
             print(f"{ce.response['Error']['Code']} : {ce.response['Error']['Message']}")
