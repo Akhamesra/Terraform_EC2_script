@@ -91,7 +91,7 @@ ses = AppGroup('ses')
 
 @ses.command('sendLaunchMail')
 @click.option('--number_of_ec2')
-def sendLaunchMail(email,number_of_ec2):  
+def sendLaunchMail(number_of_ec2):  
         RECIPIENTS=AppSetting.recipients     
         if(email.find('$$')!=-1):
             RECIPIENT=email.split('$$')  
@@ -147,7 +147,7 @@ def instanceCount():
         return 0
 
 @ses.command('sendTerminateMail')
-def sendTerminateMail(email):
+def sendTerminateMail():
         instances = instanceCount()  
         RECIPIENT=[email]      
         if(email.find('$$')!=-1):
