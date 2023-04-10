@@ -4,7 +4,7 @@ objectnumber = { 'name' : 'number',
                 'paths3' : '',
                 'pathlocal' : 'terraform_modules/EC2/'}
 
-objectip = { 'name' : 'instances_ips.txt',
+objectip = { 'name' : 'instance_ips.txt',
              'paths3' : '',
              'pathlocal' : 'terraform_modules/EC2/'}
 
