@@ -22,6 +22,9 @@ resource "aws_instance" "ec2_instancess" {
   tags = {
     Name = "VS Instance ${local.instance_number + count.index}"
   }
+  provisioner "local-exec" {
+    command = "echo Public IP of - VS Instance ${local.instance_number + count.index}: ${self.public_ip} >> instance_ips.txt"
+  }
 }
 
 

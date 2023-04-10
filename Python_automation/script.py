@@ -28,21 +28,35 @@ def downloadFile():
     except Exception as error:
         print(error)
 
-@s3.command('uploadFile')
-def uploadFile():
-    try:
-        bucketname = AppSetting.bucketname
-        objectpath = AppSetting.batchNumber['path']
-        objectname = AppSetting.batchNumber['name']
+def increamentbatch(objectpath):
+    with open(objectpath, "r") as f:
+        number = int(f.read())
+    number += 1
+    with open(objectpath, "w") as f:
+        f.write(str(number))
 
-        with open(objectpath, "r") as f:
-            number = int(f.read())
-        number += 1
-        with open(objectpath, "w") as f:
-            f.write(str(number))
-    
+def getUrl(key):
+    bucketname = "akshitkhamesraautomation"
+    url = boto3.client('s3').generate_presigned_url(
+                                        ClientMethod='get_object',
+                                        Params={
+                                            'Bucket': bucketname,
+                                            'Key': key
+                                        }
+                                    )
+    print(url)
+@s3.command('uploadFile')
+@click.option('-f', '--file', required = True)
+def uploadFile(file):
+    try:
+        objectname = file #S3/path
+        bucketname = AppSetting.bucketname #S3 name
+        objectpath = AppSetting.objectapth+objectname #local/path
+        if file=='number':
+            increamentbatch(objectpath)
         s3_resource.Object(bucketname,objectname).upload_file(objectpath, ExtraArgs={'ACL':'public-read'})
         print('File Upload')
+        getUrl(objectname)
     except Exception as ce:
         print(ce)
 
