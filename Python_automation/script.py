@@ -12,7 +12,7 @@ ec2 = AppGroup('ec2')
 @ec2.command('choosesubnet')
 @click.option('-i', '--instance_count', required=True)
 def choosesubnet(instance_count):
-    filters = [{'Name':'subnet-id', 'Values':['subnet-051895ae60c4f447d','subnet-0390f0184f9c6c81a','subnet-082071928fe3e5a8f']}]
+    filters = [{'Name':'subnet-id', 'Values': AppSetting.subnets}]
     subnets = ec2_resource.subnets.filter(Filters=filters)
     for subnet in list(subnets):
         free_ips = subnet.available_ip_address_count
@@ -24,6 +24,8 @@ def choosesubnet(instance_count):
         if int(instance_count)<= free_ips:
             print(subnet.id)
             return subnet.id
+        else:
+            return False
     
 
 s3_resource = boto3.resource('s3')
