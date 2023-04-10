@@ -1,6 +1,6 @@
 bucketname = "akshitkhamesraautomation"
 
-objectnumer = { 'name' : 'number',
+objectnumber = { 'name' : 'number',
                 'paths3' : '',
                 'pathlocal' : 'terraform_modules/EC2/'}
 
