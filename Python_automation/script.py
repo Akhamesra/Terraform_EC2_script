@@ -93,8 +93,8 @@ ses = AppGroup('ses')
 @click.option('--number_of_ec2')
 def sendLaunchMail(number_of_ec2):  
         RECIPIENTS=AppSetting.recipients     
-        if(email.find('$$')!=-1):
-            RECIPIENT=email.split('$$')  
+        # if(email.find('$$')!=-1):
+        #     RECIPIENT=email.split('$$')  
         SENDER = AppSetting.sender['name'] + " <" + AppSetting.sender['email'] + ">"
         AWS_REGION = "ap-south-1"
         SUBJECT = "Instances Created"
