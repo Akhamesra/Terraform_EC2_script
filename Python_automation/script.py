@@ -147,7 +147,6 @@ def instanceCount():
         return 0
 
 @ses.command('sendTerminateMail')
-@click.option('-e','--email',required=True,help="Enter Sender's email id")
 def sendTerminateMail(email):
         instances = instanceCount()  
         RECIPIENT=[email]      
