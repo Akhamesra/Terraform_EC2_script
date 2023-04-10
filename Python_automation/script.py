@@ -46,17 +46,27 @@ def getUrl(key):
                                     )
     print(url)
 @s3.command('uploadFile')
-@click.option('-f', '--file', required = True)
-def uploadFile(file):
+def uploadFile():
     try:
-        objectname = file #S3/path
         bucketname = AppSetting.bucketname #S3 name
-        objectpath = AppSetting.objectapth+objectname #local/path
-        if file=='number':
-            increamentbatch(objectpath)
-        s3_resource.Object(bucketname,objectname).upload_file(objectpath, ExtraArgs={'ACL':'public-read'})
-        print('File Upload')
-        getUrl(objectname)
+
+        objectname_number = AppSetting.objectnumber['paths3']+AppSetting.objectnumer['name'] #S3/path/number
+        objectpath_number = AppSetting.objectnumer['pathlocal'] +AppSetting.objectnumer['name'] #local/path/number
+        increamentbatch(objectpath_number)
+
+        objectname_ip = AppSetting.objectip['paths3']+AppSetting.objectnumer['name'] #S3/path/instances_ips.txt
+        objectpath_ip = AppSetting.objectip['pathlocal'] +AppSetting.objectip['name'] #local/path/instances_ips.txt
+
+        # objectname = file #S3/path
+        
+        # objectpath = AppSetting.objectapth+objectname #local/path
+        # objectname_number = number  
+        # if file=='number':
+        #     increamentbatch(objectpath)
+        s3_resource.Object(bucketname,objectname_number).upload_file(objectpath_number, ExtraArgs={'ACL':'public-read'})
+        s3_resource.Object(bucketname,objectname_ip).upload_file(objectpath_ip, ExtraArgs={'ACL':'public-read'})
+        print('Files Upload')
+        getUrl(objectname_ip)
     except Exception as ce:
         print(ce)
 
@@ -64,8 +74,10 @@ def uploadFile(file):
 def deleteFile():
         try:
             bucketname = AppSetting.bucketname
-            objectname = AppSetting.batchNumber['name']
-            s3_resource.Object(bucketname, objectname).delete()
+            objectname_number = AppSetting.objectnumber['paths3']+AppSetting.objectnumer['name'] #S3/path/number
+            objectname_ip = AppSetting.objectip['paths3']+AppSetting.objectnumer['name'] #S3/path/instances_ips.txt
+            s3_resource.Object(bucketname, objectname_number).delete()
+            s3_resource.Object(bucketname, objectname_ip).delete()
             print('File deleted')
         except ClientError as ce:
             print(f"{ce.response['Error']['Code']} : {ce.response['Error']['Message']}")
