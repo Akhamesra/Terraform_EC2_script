@@ -4,5 +4,6 @@ app = Flask(__name__)
 
 app.cli.add_command(script.ses)
 app.cli.add_command(script.s3)
+app.cli.add_command(script.ec2)
 
 

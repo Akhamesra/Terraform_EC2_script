@@ -5,6 +5,25 @@ import config.settings as AppSetting
 import json
 from botocore.exceptions import ClientError
 
+ec2_resource = boto3.resource('ec2')
+# Use this for specific subnets
+ec2 = AppGroup('ec2')
+
+@ec2.command('choosesubnet')
+@click.option('-i', '--instance_count', required=True)
+def choosesubnet(instance_count):
+    filters = [{'Name':'subnet-id', 'Values':['subnet-051895ae60c4f447d','subnet-0390f0184f9c6c81a','subnet-082071928fe3e5a8f']}]
+    subnets = ec2_resource.subnets.filter(Filters=filters)
+    for subnet in list(subnets):
+        free_ips = subnet.available_ip_address_count
+        # n = int(subnet.cidr_block.split('/')[1])
+        # cidr_ips = 2**(32-n)
+        # used_ips = cidr_ips - free_ips
+        # print('{:s}: cidr={:d}, aws used=5, you used={:d}, free={:d}'.\
+        #     format(subnet.id, cidr_ips, used_ips - 5, free_ips))
+        if int(instance_count)<= free_ips:
+            return subnet.id
+    
 
 s3_resource = boto3.resource('s3')
 
@@ -149,9 +168,9 @@ def instanceCount():
 @ses.command('sendTerminateMail')
 def sendTerminateMail():
         instances = instanceCount()  
-        RECIPIENT=[email]      
-        if(email.find('$$')!=-1):
-            RECIPIENT=email.split('$$')  
+        RECIPIENT=AppSetting.recipients   
+        # if(email.find('$$')!=-1):
+        #     RECIPIENT=email.split('$$')  
         SENDER = AppSetting.sender['name'] + " <" + AppSetting.sender['email'] + ">"
         AWS_REGION = "ap-south-1"
         SUBJECT = "Instances Terminated"

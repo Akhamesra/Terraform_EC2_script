@@ -1,2 +1,0 @@
-Public IP of instance 1: 13.127.96.9
-Public IP of instance 2: 13.126.92.161

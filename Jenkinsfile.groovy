@@ -18,7 +18,6 @@ pipeline {
                     amiid = "-var ami=${AMI_ID} "
                     instancetype = "-var instancetype=${Instance_type} "
                     
-                    email = "${Email}"
                     run = "${env.Run}"
                     batch = "${env.Batch}"
                     instancecountnumber = "${instance_count}"
@@ -32,10 +31,14 @@ pipeline {
                 script{
                     if(run=='Launch'){
                         sh "flask s3 downloadFile"
+                        sh 'echo Batch '+batch+' : Public Ips -'
+                        s1=$(sh 'flask ec2 choosesubnet -i 2')
+                        subnetid < echo $s1
+                        sh terraform+' -var subnetid='+var
                         sh terraform+' init -reconfigure -backend-config=backend.hcl -backend-config="key=batch$(cat number)/terraform.tfstate"'
-                        sh terraform+" apply " + instancecount + amiid + instancetype + " --auto-approve"
+                        sh terraform+" apply -var subnetid="+ subnetid + instancecount + amiid + instancetype + " --auto-approve"
                         sh "flask s3 uploadFile"
-                        sh "flask ses sendLaunchMail --email "+email+" --number_of_ec2 "+instancecountnumber
+                        sh "flask ses sendLaunchMail --number_of_ec2 "+instancecountnumber
                     }
                     else{
 
@@ -46,15 +49,11 @@ pipeline {
                         if(batch=="1"){
                             sh 'flask s3 deleteFile'
                         }
-                        sh "flask ses sendTerminateMail --email "+email
+                        sh "flask ses sendTerminateMail"
                     }
                 }
            }
         }
     }
-    post{
-        failure{
-            sh 'echo This batch is not found.'
-        }
-    }
+    
 }
