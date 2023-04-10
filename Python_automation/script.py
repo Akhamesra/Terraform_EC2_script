@@ -50,11 +50,11 @@ def uploadFile():
     try:
         bucketname = AppSetting.bucketname #S3 name
 
-        objectname_number = AppSetting.objectnumber['paths3']+AppSetting.objectnumer['name'] #S3/path/number
-        objectpath_number = AppSetting.objectnumer['pathlocal'] +AppSetting.objectnumer['name'] #local/path/number
+        objectname_number = AppSetting.objectnumber['paths3']+AppSetting.objectnumber['name'] #S3/path/number
+        objectpath_number = AppSetting.objectnumber['pathlocal'] +AppSetting.objectnumber['name'] #local/path/number
         increamentbatch(objectpath_number)
 
-        objectname_ip = AppSetting.objectip['paths3']+AppSetting.objectnumer['name'] #S3/path/instances_ips.txt
+        objectname_ip = AppSetting.objectip['paths3']+AppSetting.objectnumber['name'] #S3/path/instances_ips.txt
         objectpath_ip = AppSetting.objectip['pathlocal'] +AppSetting.objectip['name'] #local/path/instances_ips.txt
 
         # objectname = file #S3/path
@@ -75,7 +75,7 @@ def deleteFile():
         try:
             bucketname = AppSetting.bucketname
             objectname_number = AppSetting.objectnumber['paths3']+AppSetting.objectnumber['name'] #S3/path/number
-            objectname_ip = AppSetting.objectip['paths3']+AppSetting.objectnumer['name'] #S3/path/instances_ips.txt
+            objectname_ip = AppSetting.objectip['paths3']+AppSetting.objectnumber['name'] #S3/path/instances_ips.txt
             s3_resource.Object(bucketname, objectname_number).delete()
             s3_resource.Object(bucketname, objectname_ip).delete()
             print('File deleted')
