@@ -1,9 +1,12 @@
 from flask import *
-from Python_automation import script
-app = Flask(__name__)  
+from Python_automation import ec2_cli
+from Python_automation import s3_cli
+from Python_automation import ses_cli
 
-app.cli.add_command(script.ses)
-app.cli.add_command(script.s3)
-app.cli.add_command(script.ec2)
+app = Flask(__name__)
+
+app.cli.add_command(ses_cli.ses)
+app.cli.add_command(s3_cli.s3)
+app.cli.add_command(ec2_cli.ec2)
 
 
