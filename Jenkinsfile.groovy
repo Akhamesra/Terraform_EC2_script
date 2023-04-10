@@ -30,13 +30,12 @@ pipeline {
             steps {
                 script{
                     if(run=='Launch'){
+                        def flaskOutput = sh(returnStdout: true, script: 'flask ec2 choosesubnet -i '+instancecountnumber)
+                        def subnetid = flaskOutput.replaceAll("\\s+", "")
                         sh "flask s3 downloadFile"
-                        sh 'echo Batch '+batch+' : Public Ips -'
-                        s1=$(sh 'flask ec2 choosesubnet -i 2')
-                        subnetid < echo $s1
-                        sh terraform+' -var subnetid='+var
+                        sh 'echo "Batch - $(cat terraform_modules/EC2/number)" >> terraform_modules/EC2/instance_ips.txt'
                         sh terraform+' init -reconfigure -backend-config=backend.hcl -backend-config="key=batch$(cat number)/terraform.tfstate"'
-                        sh terraform+" apply -var subnetid="+ subnetid + instancecount + amiid + instancetype + " --auto-approve"
+                        sh terraform+" apply " + instancecount + amiid + instancetype + "-var subnetid=${subnetid} --auto-approve"
                         sh "flask s3 uploadFile"
                         sh "flask ses sendLaunchMail --number_of_ec2 "+instancecountnumber
                     }
