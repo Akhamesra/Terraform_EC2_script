@@ -10,7 +10,7 @@ pipeline {
                     // NonProdGitCredentialsId = 'gitlabapicaller'
                     ProdGitCredentialsId = 'gitlabapicaller'
 
-                    FLASKCLI = "source venv/bin/activate && flask"
+                    FLASKCLI = "source venv/bin/activate && flask "
                     ENVIRONMENT = "${ENVIRONMENT}"
 
                     if(ENVIRONMENT == "PROD"){
@@ -27,7 +27,7 @@ pipeline {
     stages {
         stage('Code checkout'){
             steps{
-                git branch: 'main', credentialsId: 'github', url: 'https://github.com/Akhamesra/Terraform_EC2_script.git'
+                git branch: 'main', credentialsId: ProdGitCredentialsId, url: 'https://github.com/Akhamesra/Terraform_EC2_script.git'
                 echo 'Code Checkout Done'
                 sh 'pip3 install virtualenv' 
               	sh 'python3 -m virtualenv venv'
@@ -51,29 +51,29 @@ pipeline {
             }
         }
         
-        stage ("terraform apply") {
+        stage ("Launch EC2 instances") {
             steps {
                 script{
                     if(run=='Launch'){
-                        def flaskOutput = sh(returnStdout: true, script: 'flask ec2 choosesubnet -i '+instancecountnumber)
+                        def flaskOutput = sh(returnStdout: true, script: FLASKCLI+' ec2 choosesubnet -i '+instancecountnumber)
                         def subnetid = flaskOutput.replaceAll("\\s+", "")
-                        sh "flask s3 downloadFile"
-                        sh 'echo "Batch - $(cat terraform_modules/EC2/number)" >> terraform_modules/EC2/instance_ips.txt'
-                        sh terraform+' init -reconfigure -backend-config=backend.hcl -backend-config="key=batch$(cat number)/terraform.tfstate"'
-                        sh terraform+" apply " + instancecount + amiid + instancetype + "-var subnetid=${subnetid} --auto-approve"
-                        sh "flask s3 uploadFile"
-                        sh "flask ses sendLaunchMail --number_of_ec2 "+instancecountnumber
+                        sh FLASKCLI+" s3 downloadFile"
+                        sh 'echo "Batch - $(cat terraform_modules/EC2/next_batch_number)" >> terraform_modules/EC2/instance_ips.txt'
+                        sh TERRAFORM+' init -reconfigure -backend-config=backend.hcl -backend-config="key=batch$(cat next_batch_number)/terraform.tfstate"'
+                        sh TERRAFORM+" apply " + instancecount + amiid + instancetype + "-var subnetid=${subnetid} --auto-approve"
+                        sh FLASK+" s3 uploadFile"
+                        sh FLASK+" ses sendLaunchMail --number_of_ec2 "+instancecountnumber
                     }
                     else{
 
-                        sh terraform+ ' init -reconfigure -backend-config=backend.hcl -backend-config=key=batch'+batch+'/terraform.tfstate'
-                        sh terraform+ ' plan -destroy -out=file'
-                        sh terraform+ ' show -json file > file1.json'
-                        sh terraform+ ' destroy --auto-approve'
+                        sh TERRAFORM+ ' init -reconfigure -backend-config=backend.hcl -backend-config=key=batch'+batch+'/terraform.tfstate'
+                        sh TERRAFORM+ ' plan -destroy -out=file'
+                        sh TERRAFORM+ ' show -json file > file1.json'
+                        sh TERRAFORM+ ' destroy --auto-approve'
                         if(batch=="1"){
-                            sh 'flask s3 deleteFile'
+                            sh FLASK+' s3 deleteFile'
                         }
-                        sh "flask ses sendTerminateMail"
+                        sh FLASK+" ses sendTerminateMail"
                     }
                 }
            }

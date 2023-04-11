@@ -2,9 +2,6 @@ from flask.cli import AppGroup
 import click
 import boto3
 import config.settings as AppSetting
-import json
-from botocore.exceptions import ClientError
-import os
 
 ec2_resource = boto3.resource('ec2')
 ec2 = AppGroup('ec2')

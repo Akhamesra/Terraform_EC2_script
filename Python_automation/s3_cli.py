@@ -13,8 +13,6 @@ s3 = AppGroup('s3')
 @s3.command('downloadFile')
 def downloadFile():
     bucketname = AppSetting.bucketname
-    # objectpath = AppSetting.batchNumber['path']
-    # objectname = AppSetting.batchNumber['name']
     objectname_number = AppSetting.objectnumber['paths3']+AppSetting.objectnumber['name'] #S3/path/number
     objectpath_number = AppSetting.objectnumber['pathlocal'] +AppSetting.objectnumber['name'] #local/path/number
     try:
@@ -59,15 +57,9 @@ def uploadFile():
         objectname_ip = AppSetting.objectip['paths3']+AppSetting.objectip['name'] #S3/path/instances_ips.txt
         objectpath_ip = AppSetting.objectip['pathlocal'] +AppSetting.objectip['name'] #local/path/instances_ips.txt
 
-        # objectname = file #S3/path
-        
-        # objectpath = AppSetting.objectapth+objectname #local/path
-        # objectname_number = number  
-        # if file=='number':
-        #     increamentbatch(objectpath)
         s3_resource.Object(bucketname,objectname_number).upload_file(objectpath_number, ExtraArgs={'ACL':'public-read'})
         s3_resource.Object(bucketname,objectname_ip).upload_file(objectpath_ip, ExtraArgs={'ACL':'public-read'})
-        print('Files Upload')
+        print('Files Uploaded')
         getUrl(objectname_ip)
     except Exception as ce:
         print(ce)
@@ -79,7 +71,7 @@ def deleteFile():
             objectname_number = AppSetting.objectnumber['paths3']+AppSetting.objectnumber['name'] #S3/path/number
             objectname_ip = AppSetting.objectip['paths3']+AppSetting.objectip['name'] #S3/path/instances_ips.txt
             s3_resource.Object(bucketname, objectname_number).delete()
-            print('number file deleted')
+            print('next_batch_number file deleted')
             s3_resource.Object(bucketname, objectname_ip).delete()
             os.remove(AppSetting.objectip['pathlocal']+AppSetting.objectip['name'])
             print('instance_ips file deleted')

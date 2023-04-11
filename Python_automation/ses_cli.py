@@ -17,7 +17,7 @@ def sendLaunchMail(number_of_ec2):
         SENDER = AppSetting.sender['name'] + " <" + AppSetting.sender['email'] + ">"
         AWS_REGION = "ap-south-1"
         SUBJECT = "Instances Created"
-        BODY_TEXT = "FROM TEAM DEVOPS"
+        BODY_TEXT = "FROM TEAM SRE"
         BODY_HTML = number_of_ec2+" EC2 instances created."
         CHARSET = "UTF-8"
         # client = self.getClient('ses', AWS_REGION)
