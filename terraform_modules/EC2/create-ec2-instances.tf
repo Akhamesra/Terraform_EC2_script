@@ -6,7 +6,7 @@ terraform {
 
 data "aws_instances" "existing_instances" {
   instance_tags = {
-    Name = "VS Instance*"
+    Name = "BFL-PRCS-AIRFLOWCLS-WORKER*"
   }
 }
 
@@ -20,10 +20,10 @@ resource "aws_instance" "ec2_instancess" {
   instance_type = var.instancetype
   subnet_id = var.subnetid
   tags = {
-    Name = "VS Instance ${local.instance_number + count.index}"
+    Name = "BFL-PRCS-AIRFLOWCLS-WORKER ${local.instance_number + count.index}"
   }
   provisioner "local-exec" {
-    command = "echo VS Instance ${local.instance_number + count.index}: ${self.public_ip} >> instance_ips.txt"
+    command = "echo BFL-PRCS-AIRFLOWCLS-WORKER ${local.instance_number + count.index}: ${self.public_ip} >> instance_ips.txt"
   }
 }
 
