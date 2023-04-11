@@ -7,16 +7,21 @@ from botocore.exceptions import ClientError
 import os
 from os import path
 
-s3_resource = boto3.resource('s3')
+def getResource(aws_profile):
+    session = boto3.session.Session(profile_name = aws_profile)
+    resource = session.resource('s3')
+    return resource
 
 s3 = AppGroup('s3')
 
 @s3.command('downloadFile')
-def downloadFile():
+@click.option('--aws_profile',  required=True, default='default', help='AWS session profile')
+def downloadFile(aws_profile):
     bucketname = AppSetting.bucketname
     objectname_number = AppSetting.objectnumber['paths3']+AppSetting.objectnumber['name'] #S3/path/number
     objectpath_number = AppSetting.objectnumber['pathlocal'] +AppSetting.objectnumber['name'] #local/path/number
     try:
+        s3_resource = getResource(aws_profile)
         s3_resource.Object(bucketname,objectname_number).download_file(objectpath_number)
         print('File Downloaded')
     except ClientError as ce:
@@ -47,7 +52,8 @@ def getUrl(key):
                                     )
     print(url)
 @s3.command('uploadFile')
-def uploadFile():
+@click.option('--aws_profile',  required=True, default='default', help='AWS session profile')
+def uploadFile(aws_profile):
     try:
         bucketname = AppSetting.bucketname #S3 name
 
@@ -58,6 +64,7 @@ def uploadFile():
         objectname_ip = AppSetting.objectip['paths3']+AppSetting.objectip['name'] #S3/path/instances_ips.txt
         objectpath_ip = AppSetting.objectip['pathlocal'] +AppSetting.objectip['name'] #local/path/instances_ips.txt
 
+        s3_resource = getResource(aws_profile)
         s3_resource.Object(bucketname,objectname_number).upload_file(objectpath_number, ExtraArgs={'ACL':'public-read'})
         s3_resource.Object(bucketname,objectname_ip).upload_file(objectpath_ip, ExtraArgs={'ACL':'public-read'})
         print('Files Uploaded')
@@ -66,11 +73,14 @@ def uploadFile():
         print(ce)
 
 @s3.command('deleteFile')
-def deleteFile():
+@click.option('--aws_profile',  required=True, default='default', help='AWS session profile')
+def deleteFile(aws_profile):
         try:
             bucketname = AppSetting.bucketname
             objectname_number = AppSetting.objectnumber['paths3']+AppSetting.objectnumber['name'] #S3/path/number
             objectname_ip = AppSetting.objectip['paths3']+AppSetting.objectip['name'] #S3/path/instances_ips.txt
+            
+            s3_resource = getResource(aws_profile)
             s3_resource.Object(bucketname, objectname_number).delete()
             print('next_batch_number file deleted')
             s3_resource.Object(bucketname, objectname_ip).delete()

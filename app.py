@@ -1,7 +1,7 @@
 from flask import *
-from Python_automation import ec2_cli
-from Python_automation import s3_cli
-from Python_automation import ses_cli
+from Python_modules import ec2_cli
+from Python_modules import s3_cli
+from Python_modules import ses_cli
 
 app = Flask(__name__)
 

@@ -3,13 +3,19 @@ import click
 import boto3
 import config.settings as AppSetting
 
-ec2_resource = boto3.resource('ec2')
+def getResource(aws_profile):
+    session = boto3.session.Session(profile_name = aws_profile)
+    resource = session.resource('ec2')
+    return resource
+
 ec2 = AppGroup('ec2')
 
 @ec2.command('choosesubnet')
 @click.option('-i', '--instance_count', required=True)
-def choosesubnet(instance_count):
+@click.option('--aws_profile',  required=True, default='default', help='AWS session profile')
+def choosesubnet(instance_count,aws_profile):
     try:
+        ec2_resource = getResource(aws_profile)
         filters = [{'Name':'subnet-id', 'Values': AppSetting.subnets}]
         subnets = ec2_resource.subnets.filter(Filters=filters)
         for subnet in list(subnets):

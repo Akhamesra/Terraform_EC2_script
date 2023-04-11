@@ -1,3 +1,15 @@
+variable "aws_region" {
+  description = "AWS region"
+  type        = string
+  default     = "ap-south-1"
+}
+
+variable "aws_profile" {
+  description = "AWS profile"
+  type        = string
+  default     = "default"
+}
+
 variable "instance_count" {
   description = "Number of EC2 instances to create"
   type        = number
@@ -20,3 +32,5 @@ variable "subnetid"{
   type = string
   default = ""
 }
+
+

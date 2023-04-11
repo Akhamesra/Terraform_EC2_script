@@ -6,11 +6,17 @@ import json
 from botocore.exceptions import ClientError
 import os
 
+def getClient(aws_profile):
+    session = boto3.session.Session(profile_name = aws_profile)
+    client = session.client('ses')
+    return client
+
 ses = AppGroup('ses')
 
 @ses.command('sendLaunchMail')
 @click.option('--number_of_ec2')
-def sendLaunchMail(number_of_ec2):  
+@click.option('--aws_profile',  required=True, default='default', help='AWS session profile')
+def sendLaunchMail(number_of_ec2,aws_profile):  
         RECIPIENTS=AppSetting.recipients     
         # if(email.find('$$')!=-1):
         #     RECIPIENT=email.split('$$')  
@@ -21,7 +27,8 @@ def sendLaunchMail(number_of_ec2):
         BODY_HTML = number_of_ec2+" EC2 instances created."
         CHARSET = "UTF-8"
         # client = self.getClient('ses', AWS_REGION)
-        client = boto3.client('ses', region_name=AWS_REGION)
+        
+        client = getClient(aws_profile)
         try:
             response = client.send_email(
                 Destination={
@@ -66,7 +73,8 @@ def instanceCount():
         return 0
 
 @ses.command('sendTerminateMail')
-def sendTerminateMail():
+@click.option('--aws_profile',  required=True, default='default', help='AWS session profile')
+def sendTerminateMail(aws_profile):
         instances = instanceCount()  
         RECIPIENT=AppSetting.recipients   
         # if(email.find('$$')!=-1):
@@ -78,7 +86,7 @@ def sendTerminateMail():
         BODY_HTML = str(instances) +" EC2 instances terminated."
         CHARSET = "UTF-8"
         # client = self.getClient('ses', AWS_REGION)
-        client = boto3.client('ses', region_name=AWS_REGION)
+        client = getClient(aws_profile)
         try:
             response = client.send_email(
                 Destination={
