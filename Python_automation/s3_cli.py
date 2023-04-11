@@ -5,6 +5,7 @@ import config.settings as AppSetting
 import json
 from botocore.exceptions import ClientError
 import os
+from os import path
 
 s3_resource = boto3.resource('s3')
 
@@ -73,7 +74,10 @@ def deleteFile():
             s3_resource.Object(bucketname, objectname_number).delete()
             print('next_batch_number file deleted')
             s3_resource.Object(bucketname, objectname_ip).delete()
-            os.remove(AppSetting.objectip['pathlocal']+AppSetting.objectip['name'])
-            print('instance_ips file deleted')
+
+            if path.exists(AppSetting.objectip['pathlocal']+AppSetting.objectip['name']):
+                os.remove(AppSetting.objectip['pathlocal']+AppSetting.objectip['name'])
+                print('instance_ips file deleted')
+
         except ClientError as ce:
             print(f"{ce.response['Error']['Code']} : {ce.response['Error']['Message']}")
