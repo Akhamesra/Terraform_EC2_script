@@ -10,6 +10,11 @@ variable "aws_profile" {
   default     = "default"
 }
 
+variable "vpc_id" {
+  type = string
+  default = "vpc-047278c6bb3919d49"
+}
+
 variable "instance_count" {
   description = "Number of EC2 instances to create"
   type        = number

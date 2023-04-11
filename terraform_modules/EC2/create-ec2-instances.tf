@@ -14,13 +14,16 @@ provider "aws" {
     profile = var.aws_profile
 }
 
-data "aws_subnet" "info" {
-  vpc_id = "vpc-047278c6bb3919d49"
+data "aws_subnets" "example" {
+  filter {
+    name   = "vpc-id"
+    values = [var.vpc_id]
+  }
 }
 
-data "aws_subnet" "all" { 
-  for_each = data.aws_subnet.info.ids
-  id = each.value
+data "aws_subnet" "all" {
+  for_each = toset(data.aws_subnets.example.ids)
+  id       = each.value
 }
 
 data "aws_instances" "existing_instances" {
@@ -44,7 +47,7 @@ resource "aws_instance" "ec2_instancess" {
     Name = "BFL-PRCS-AIRFLOWCLS-WORKER ${local.instance_number + count.index}"
   }
   provisioner "local-exec" {
-    command = "echo BFL-PRCS-AIRFLOWCLS-WORKER ${local.instance_number + count.index}: ${self.public_ip} >> instance_ips.txt"
+    command = "echo BFL-PRCS-AIRFLOWCLS-WORKER ${local.instance_number + count.index}: ${self.private_ip} >> instance_ips.txt"
   }
 }
 
