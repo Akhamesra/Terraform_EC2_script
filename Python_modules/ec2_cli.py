@@ -20,15 +20,15 @@ def choosesubnet(instance_count,aws_profile):
         subnets = ec2_resource.subnets.filter(Filters=filters)
         for subnet in list(subnets):
             free_ips = subnet.available_ip_address_count
-            # n = int(subnet.cidr_block.split('/')[1])
-            # cidr_ips = 2**(32-n)
-            # used_ips = cidr_ips - free_ips
-            # print('{:s}: cidr={:d}, aws used=5, you used={:d}, free={:d}'.\
-            #     format(subnet.id, cidr_ips, used_ips - 5, free_ips))
-            if int(instance_count)<= free_ips:
-                print(subnet.id)
-                return subnet.id
-            else:
-                return False
+            n = int(subnet.cidr_block.split('/')[1])
+            cidr_ips = 2**(32-n)
+            used_ips = cidr_ips - free_ips
+            print('{:s}: cidr={:d}, aws used=5, you used={:d}, free={:d}'.\
+                format(subnet.id, cidr_ips, used_ips - 5, free_ips))
+            # if int(instance_count)<= free_ips:
+            #     print(subnet.id)
+            #     return subnet.id
+            # else:
+            #     return False
     except Exception as e:
         print(e)

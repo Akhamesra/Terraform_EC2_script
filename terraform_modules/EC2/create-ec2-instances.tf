@@ -33,8 +33,9 @@ data "aws_instances" "existing_instances" {
 }
 
 locals {
-  max_available = max(values(data.aws_subnet.all)[*].available_ip_address_count...)
-  subnetid = [for k, s in data.aws_subnet.all : s.id if s.available_ip_address_count == local.max_available][0]
+  max_available = max(values(data.aws_subnet.all)[*].available_ip_address_count...) 
+  # subnetid = [for k, s in data.aws_subnet.all : s.id if s.available_ip_address_count == local.max_available][0]
+  subnetid = [for k, s in data.aws_subnet.all : s.id if s.available_ip_address_count >= var.instance_count][0]
   instance_number = length(data.aws_instances.existing_instances.ids)
 }
 
