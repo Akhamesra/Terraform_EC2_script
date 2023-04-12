@@ -10,7 +10,7 @@ pipeline {
                 echo 'Code Checkout Done'
             }
         }
-        stage('set variables'){
+        stage('Set variables'){
             steps{
                 script{
                     terraform = 'cd terraform_modules/EC2 && terraform '
@@ -34,14 +34,14 @@ pipeline {
                         // def subnetid = flaskOutput.replaceAll("\\s+", "")
                         sh "flask s3 downloadFile"
                         sh 'echo "Batch - $(cat terraform_modules/EC2/number)" >> terraform_modules/EC2/instance_ips.txt'
-                        sh terraform+' init -reconfigure -backend-config=backend.hcl -backend-config="key=batch$(cat number)/terraform.tfstate"'
+                        sh terraform+' init -reconfigure -backend-config=backend.hcl -backend-config="key=automation/analytics/airflow-automated-provision/batch$(cat number)/terraform.tfstate"'
                         sh terraform+" apply " + instancecount + amiid + instancetype + " --auto-approve"
                         sh "flask s3 uploadFile"
                         sh "flask ses sendLaunchMail --number_of_ec2 "+instancecountnumber
                     }
                     else{
 
-                        sh terraform+ ' init -reconfigure -backend-config=backend.hcl -backend-config=key=batch'+batch+'/terraform.tfstate'
+                        sh terraform+ ' init -reconfigure -backend-config=backend.hcl -backend-config=key=automation/analytics/airflow-automated-provision/batch'+batch+'/terraform.tfstate'
                         sh terraform+ ' plan -destroy -out=file'
                         sh terraform+ ' show -json file > file1.json'
                         sh terraform+ ' destroy --auto-approve'
