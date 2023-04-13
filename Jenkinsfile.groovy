@@ -3,7 +3,7 @@ pipeline {
     environment{
         FLASK_APP='app'
     }
-    stages {
+    stages{
         stage('Code checkout'){
             steps{
                 git branch: 'main', credentialsId: 'github', url: 'https://github.com/Akhamesra/Terraform_EC2_script.git'
