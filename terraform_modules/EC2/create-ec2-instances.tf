@@ -47,17 +47,18 @@ output "roles_list" {
   value = data.aws_iam_roles.all_roles.names
 }
 
-# resource "aws_instance" "ec2_instancess" {
-#   count         = var.instance_count
-#   ami           = var.ami
-#   instance_type = var.instancetype
-#   subnet_id     = local.subnetid
-#   tags = {
-#     Name = "BFL-PRCS-AIRFLOWCLS-WORKER ${local.instance_number + count.index}"
-#   }
-#   provisioner "local-exec" {
-#     command = "echo BFL-PRCS-AIRFLOWCLS-WORKER ${local.instance_number + count.index}: ${self.private_ip} >> instance_ips.txt"
-#   }
-# }
+resource "aws_instance" "ec2_instancess" {
+  count         = var.instance_count
+  ami           = var.ami
+  instance_type = var.instancetype
+  subnet_id     = local.subnetid
+  tags = {
+    Name = "BFL-PRCS-AIRFLOWCLS-WORKER ${local.instance_number + count.index}"
+    CREATION_DATE = formatdate("YYYY-MM-DD", timestamp())
+  }
+  provisioner "local-exec" {
+    command = "echo BFL-PRCS-AIRFLOWCLS-WORKER ${local.instance_number + count.index}: ${self.private_ip} >> instance_ips.txt"
+  }
+}
 
 
