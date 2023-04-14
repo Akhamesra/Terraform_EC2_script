@@ -42,7 +42,7 @@ data "aws_subnet" "all" {
 # }
 data "aws_instances" "existing_instances" {
   instance_tags = {
-    Name = "BFL-DE-AIRFLOW-WORKER-*"
+    Name = "BFL-PRCS-AIRFLOWCLS-WORKER-*"
   }
   
 }
