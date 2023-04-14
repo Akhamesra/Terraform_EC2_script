@@ -51,11 +51,13 @@ locals {
 resource "aws_network_interface" "eni1" {
     subnet_id        = var.subnetid
 }
+
 resource "aws_instance" "ec2_instancess" {
   count         = var.instance_count
   ami           = var.ami
   instance_type = var.instancetype
   subnet_id     = var.subnetid
+
   tags = {
     Name = "BFL-PRCS-AIRFLOWCLS-WORKER ${local.instance_number + count.index}"
     CREATION_DATE = formatdate("YYYY-MM-DD", timestamp())
