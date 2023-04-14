@@ -24,7 +24,6 @@ def choosesubnet(instance_count,aws_profile):
         for subnet in list(subnets):
             subnet_free_ips[subnet.id] = subnet.available_ip_address_count
         subnet_free_ips = dict(sorted(subnet_free_ips.items(), key=lambda x:x[1],reverse=True))
-        print(subnet_free_ips)
         total_available_ips = sum(subnet_free_ips.values()) - 2
         subnet_str = ""
         if total_available_ips<int(instance_count):
@@ -45,7 +44,6 @@ def choosesubnet(instance_count,aws_profile):
                     # subnet_list[k] = instance_count
                     instance_count = 0
 
-        print(subnet_str)
         return subnet_str
         # print(subnet_free_ips)
         # print(total_available_ips)
