@@ -6,6 +6,7 @@ import json
 from botocore.exceptions import ClientError
 import os
 from os import path
+from botocore.config import Config
 
 def getResource(aws_profile):
     session = boto3.session.Session(profile_name = aws_profile)
@@ -42,13 +43,14 @@ def increamentbatch(objectpath):
         f.write(str(number))
 
 def getUrl(key):
-    bucketname = "akshitkhamesraautomation"
+    bucketname = AppSetting.bucketname
     url = boto3.client('s3').generate_presigned_url(
                                         ClientMethod='get_object',
                                         Params={
                                             'Bucket': bucketname,
                                             'Key': key
-                                        }
+                                        },
+                                        ExpiresIn=21600
                                     )
     print(url)
 @s3.command('uploadFile')
@@ -65,8 +67,8 @@ def uploadFile(aws_profile):
         objectpath_ip = AppSetting.objectip['pathlocal'] +AppSetting.objectip['name'] #local/path/instances_ips.txt
 
         s3_resource = getResource(aws_profile)
-        s3_resource.Object(bucketname,objectname_number).upload_file(objectpath_number, ExtraArgs={'ACL':'public-read'})
-        s3_resource.Object(bucketname,objectname_ip).upload_file(objectpath_ip, ExtraArgs={'ACL':'public-read'})
+        s3_resource.Object(bucketname,objectname_number).upload_file(objectpath_number)
+        s3_resource.Object(bucketname,objectname_ip).upload_file(objectpath_ip)
         print('Files Uploaded')
         getUrl(objectname_ip)
     except Exception as ce:

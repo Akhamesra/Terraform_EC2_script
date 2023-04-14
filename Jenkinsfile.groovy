@@ -30,7 +30,7 @@ pipeline {
             steps {
                 script{
                     if(run=='Launch'){
-                        // def flaskOutput = sh(returnStdout: true, script: 'flask ec2 choosesubnet -i '+instancecountnumber)
+                        def flaskOutput = sh(returnStdout: true, script: 'flask ec2 choosesubnet -i '+instancecountnumber)
                         // def subnetid = flaskOutput.replaceAll("\\s+", "")
                         sh "flask s3 downloadFile"
                         sh 'echo "Batch - $(cat terraform_modules/EC2/next_batch_number)" >> terraform_modules/EC2/instance_ips.txt'

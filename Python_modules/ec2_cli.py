@@ -15,20 +15,29 @@ ec2 = AppGroup('ec2')
 @click.option('--aws_profile',  required=True, default='default', help='AWS session profile')
 def choosesubnet(instance_count,aws_profile):
     try:
+        instance_count = int(instance_count)
+        subnet_list = {}
+        subnet_free_ips = {}
         ec2_resource = getResource(aws_profile)
         filters = [{'Name':'subnet-id', 'Values': AppSetting.subnets}]
         subnets = ec2_resource.subnets.filter(Filters=filters)
         for subnet in list(subnets):
-            free_ips = subnet.available_ip_address_count
-            n = int(subnet.cidr_block.split('/')[1])
-            cidr_ips = 2**(32-n)
-            used_ips = cidr_ips - free_ips
-            print('{:s}: cidr={:d}, aws used=5, you used={:d}, free={:d}'.\
-                format(subnet.id, cidr_ips, used_ips - 5, free_ips))
-            # if int(instance_count)<= free_ips:
-            #     print(subnet.id)
-            #     return subnet.id
-            # else:
-            #     return False
+            subnet_free_ips[subnet.id] = subnet.available_ip_address_count
+        subnet_free_ips = dict(sorted(subnet_free_ips.items(), key=lambda x:x[1],reverse=True))
+        total_available_ips = sum(subnet_free_ips.values())
+        if total_available_ips<int(instance_count):
+            print("Not Enough available ips")
+            return False
+        for k in subnet_free_ips:
+            if instance_count>0:
+                if instance_count>subnet_free_ips[k]:
+                    subnet_list[k] = subnet_free_ips[k]
+                    instance_count = instance_count - subnet_free_ips[k]
+                else:
+                    subnet_list[k] = instance_count
+                    instance_count = 0
+        print(subnet_list)
+        # print(subnet_free_ips)
+        # print(total_available_ips)
     except Exception as e:
         print(e)

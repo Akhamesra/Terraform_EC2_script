@@ -35,7 +35,7 @@ variable "instancetype" {
 
 variable "subnetid"{
   type = string
-  default = ""
+  default = "subnet-0390f0184f9c6c81a"
 }
 
 
