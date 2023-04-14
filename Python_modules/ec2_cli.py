@@ -31,11 +31,12 @@ def choosesubnet(instance_count,aws_profile):
         for k in subnet_free_ips:
             if instance_count>0:
                 if instance_count>subnet_free_ips[k]:
-                    subnet_list[k] = subnet_free_ips[k]
+                    subnet_list[k] = str(subnet_free_ips[k])
                     instance_count = instance_count - subnet_free_ips[k]
                 else:
-                    subnet_list[k] = instance_count
+                    subnet_list[k] = str(instance_count)
                     instance_count = 0
+                
         x = json.dumps(subnet_list)
         json_obj = json.loads(x)
         return json_obj
