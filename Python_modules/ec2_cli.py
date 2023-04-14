@@ -33,10 +33,10 @@ def choosesubnet(instance_count,aws_profile):
             if instance_count>0:
                 if instance_count>subnet_free_ips[k]:
                     # subnet_list[k] = str(subnet_free_ips[k])
-                    subnet_str += k+"="+str(subnet_free_ips[k])+" "
+                    subnet_str += k+"="+str(subnet_free_ips[k]-1)+" "
 
                     # subnet_list[k] = subnet_free_ips[k]
-                    instance_count = instance_count - subnet_free_ips[k]
+                    instance_count = instance_count - (subnet_free_ips[k] -1)
                 else:
                     # subnet_list[k] = str(instance_count)
                     subnet_str += k+"="+str(instance_count)
