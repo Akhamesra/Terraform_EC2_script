@@ -40,13 +40,19 @@ data "aws_subnet" "all" {
 # output "instance_name" {
 #   value = [for id in data.aws_instances.existing_instances.ids : id]
 # }
-
+data "aws_instances" "existing_instances" {
+  instance_tags = {
+    Name = "BFL-DE-AIRFLOW-WORKER-*"
+  }
+  
+}
 
 locals {
   max_available = max(values(data.aws_subnet.all)[*].available_ip_address_count...) 
   # subnetid = [for k, s in data.aws_subnet.all : s.id if s.available_ip_address_count == local.max_available][0]
   subnetid = [for k, s in data.aws_subnet.all : s.id if s.available_ip_address_count >= var.instance_count][0]
-  instance_number = 50
+  instance_count = length(data.aws_instances.existing_instances.ids)
+  instance_number = local.instance_count + 44
 }
 resource "aws_network_interface" "eni1" {
     subnet_id        = var.subnetid
