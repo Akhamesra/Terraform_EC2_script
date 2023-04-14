@@ -40,7 +40,7 @@ def choosesubnet(instance_count,aws_profile):
                     instance_count = 0
 
         print(subnet_list)
-        return subnet_list
+        return {"subnet-082071928fe3e5a8f": 4091, "subnet-051895ae60c4f447d": 3909}
         # print(subnet_free_ips)
         # print(total_available_ips)
     except Exception as e:
