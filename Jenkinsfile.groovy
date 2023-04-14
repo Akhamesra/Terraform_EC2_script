@@ -30,14 +30,19 @@ pipeline {
             steps {
                 script{
                     if(run=='Launch'){
-                        def flaskOutput = sh(returnStdout: true, script: 'flask ec2 choosesubnet -i '+instancecountnumber)
+                        def flaskOutput = sh(returnStdout: true, script: 'flask ec2 choosesubnet -i '+instancecountnumber).trim()
+                        def json = new groovy.json.JsonSlurper().parseText(flaskOutput)
                         // def subnetid = flaskOutput.replaceAll("\\s+", "")
-                        sh "flask s3 downloadFile"
-                        sh 'echo "Batch - $(cat terraform_modules/EC2/next_batch_number)" >> terraform_modules/EC2/instance_ips.txt'
-                        sh terraform+' init -reconfigure -backend-config=backend.hcl -backend-config="key=automation/analytics/airflow-automated-provision/batch$(cat next_batch_number)/terraform.tfstate"'
-                        sh terraform+" apply " + instancecount + amiid + instancetype + " --auto-approve"
-                        sh "flask s3 uploadFile"
-                        sh "flask ses sendLaunchMail --number_of_ec2 "+instancecountnumber
+                        // sh "flask s3 downloadFile"
+                        // sh 'echo "Batch - $(cat terraform_modules/EC2/next_batch_number)" >> terraform_modules/EC2/instance_ips.txt'
+                        json.each{ key, value ->
+                            sh 'echo KEY : ${key}, VALUE : ${value}'
+
+                        }
+                        // sh terraform+' init -reconfigure -backend-config=backend.hcl -backend-config="key=automation/analytics/airflow-automated-provision/batch$(cat next_batch_number)/terraform.tfstate"'
+                        // sh terraform+" apply " + instancecount + amiid + instancetype + " --auto-approve"
+                        // sh "flask s3 uploadFile"
+                        // sh "flask ses sendLaunchMail --number_of_ec2 "+instancecountnumber
                     }
                     else{
 
