@@ -36,8 +36,9 @@ def choosesubnet(instance_count,aws_profile):
                 else:
                     subnet_list[k] = instance_count
                     instance_count = 0
-        # print(type(json.dumps(subnet_list)))
-        return subnet_list
+        x = json.dumps(subnet_list)
+        json_obj = json.loads(x)
+        return json_obj
         # print(subnet_free_ips)
         # print(total_available_ips)
     except Exception as e:
