@@ -46,4 +46,6 @@ def choosesubnet(instance_count,aws_profile):
         # print(subnet_free_ips)
         # print(total_available_ips)
     except Exception as e:
+        print("!!!!")
         print(e)
+        print("!!!!")
