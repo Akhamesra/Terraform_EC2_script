@@ -28,19 +28,23 @@ def choosesubnet(instance_count,aws_profile):
         if total_available_ips<int(instance_count):
             print("Not Enough available ips")
             return False
+        subnet_str = ""
         for k in subnet_free_ips:
             if instance_count>0:
                 if instance_count>subnet_free_ips[k]:
                     # subnet_list[k] = str(subnet_free_ips[k])
-                    subnet_list[k] = subnet_free_ips[k]
+                    subnet_str += k+"="+str(subnet_free_ips[k])+" "
+
+                    # subnet_list[k] = subnet_free_ips[k]
                     instance_count = instance_count - subnet_free_ips[k]
                 else:
                     # subnet_list[k] = str(instance_count)
-                    subnet_list[k] = instance_count
+                    subnet_str += k+"="+str(instance_count)
+                    # subnet_list[k] = instance_count
                     instance_count = 0
-        subnet_json = json.dumps(subnet_list)
-        print(subnet_json)
-        return subnet_json
+
+        print(subnet_str)
+        return subnet_str
         # print(subnet_free_ips)
         # print(total_available_ips)
     except Exception as e:
